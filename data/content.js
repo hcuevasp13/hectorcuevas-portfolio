@@ -97,53 +97,15 @@ export const projects = {
 }
 
 export const certificates = [
-  {
-    platform: "Platzi",
-    name: { es: "Claude AI", en: "Claude AI" },
-    year: "2024"
-  },
-  {
-    platform: "Platzi",
-    name: { es: "ChatGPT con Google Sheets", en: "ChatGPT with Google Sheets" },
-    year: "2024"
-  },
-  {
-    platform: "Platzi",
-    name: { es: "Marketing Digital", en: "Digital Marketing" },
-    year: "2024"
-  },
-  {
-    platform: "Platzi",
-    name: { es: "Prompt Engineering", en: "Prompt Engineering" },
-    year: "2024"
-  },
-  {
-    platform: "Platzi",
-    name: { es: "Diseño gráfico para Ads", en: "Graphic Design for Ads" },
-    year: "2025",
-    status: true
-  },
-  {
-    platform: "Platzi",
-    name: { es: "Claude Code", en: "Claude Code" },
-    year: "2025",
-    status: true
-  },
-  {
-    platform: "Domestika",
-    name: { es: "Usar ChatGPT para trabajar", en: "Using ChatGPT for Work" },
-    year: "2025"
-  },
-  {
-    platform: "Domestika",
-    name: { es: "Canva de 0 a 100", en: "Canva from 0 to 100" },
-    year: "2025"
-  },
-  {
-    platform: "Universidad",
-    name: { es: "Ingeniería en Sistemas", en: "Systems Engineering" },
-    year: ""
-  },
+  { platform: "Platzi", name: { es: "Claude AI", en: "Claude AI" }, year: "2026" },
+  { platform: "Platzi", name: { es: "ChatGPT con Google Sheets", en: "ChatGPT with Google Sheets" }, year: "2026" },
+  { platform: "Platzi", name: { es: "Marketing Digital", en: "Digital Marketing" }, year: "2026" },
+  { platform: "Platzi", name: { es: "Prompt Engineering", en: "Prompt Engineering" }, year: "2026" },
+  { platform: "Platzi", name: { es: "Diseño gráfico para Ads", en: "Graphic Design for Ads" }, year: "2026" },
+  { platform: "Platzi", name: { es: "Claude Code", en: "Claude Code" }, year: "2026" },
+  { platform: "Domestika", name: { es: "Usar ChatGPT para trabajar", en: "Using ChatGPT for Work" }, year: "2025" },
+  { platform: "Domestika", name: { es: "Canva de 0 a 100", en: "Canva from 0 to 100" }, year: "2025" },
+  { platform: "Universidad", name: { es: "Ingeniería en Sistemas", en: "Systems Engineering" }, year: "" },
 ]
 
 export const skills = {

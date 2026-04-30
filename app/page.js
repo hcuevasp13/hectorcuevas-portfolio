@@ -1,15 +1,26 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { services, projects, certificates, skills, tools, stats, ui } from '../data/content'
 
 export default function Home() {
   const [lang, setLang] = useState('es')
   const [activeFilter, setActiveFilter] = useState(null)
+  const [isMobile, setIsMobile] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const t = ui[lang]
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   const filteredProjects = activeFilter && activeFilter !== t.filterAll
     ? projects[lang].filter(p => p.cat === activeFilter)
     : projects[lang]
+
+  const px = isMobile ? '20px' : '48px'
 
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
@@ -19,55 +30,104 @@ export default function Home() {
         position: 'sticky', top: 0, zIndex: 100,
         background: 'rgba(10,10,11,0.93)', backdropFilter: 'blur(16px)',
         borderBottom: '0.5px solid var(--border)',
-        padding: '0 48px', height: '60px',
+        padding: `0 ${px}`, height: '60px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between'
       }}>
         <div style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontWeight: 300, fontSize: '20px', color: 'var(--text)', letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>
           Héctor Cuevas
         </div>
-        <ul style={{ display: 'flex', gap: '28px', listStyle: 'none' }}>
-          {['services','portfolio','skills','certs','contact'].map((id, i) => (
-            <li key={id}>
-              <a href={`#${id}`} style={{ textDecoration: 'none', fontSize: '12px', color: 'var(--text2)', letterSpacing: '0.1em', textTransform: 'uppercase', transition: 'color 0.2s' }}
-                onMouseEnter={e => e.target.style.color = 'var(--accent)'}
-                onMouseLeave={e => e.target.style.color = 'var(--text2)'}>
-                {t.nav[i]}
-              </a>
-            </li>
-          ))}
-        </ul>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ display: 'flex', border: '0.5px solid var(--border2)', borderRadius: '20px', overflow: 'hidden' }}>
-            {['es','en'].map(l => (
-              <button key={l} onClick={() => { setLang(l); setActiveFilter(null) }}
-                style={{
-                  padding: '5px 13px', fontSize: '11px', fontWeight: 500,
-                  cursor: 'pointer', border: 'none', letterSpacing: '0.08em',
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  background: lang === l ? 'var(--accent)' : 'transparent',
-                  color: lang === l ? '#0A0A0B' : 'var(--text2)',
-                  transition: 'all 0.2s'
-                }}>
-                {l.toUpperCase()}
-              </button>
-            ))}
+
+        {isMobile ? (
+          <button onClick={() => setMenuOpen(!menuOpen)}
+            style={{ background: 'none', border: 'none', color: 'var(--text)', fontSize: '22px', cursor: 'pointer', padding: '8px' }}>
+            {menuOpen ? '✕' : '☰'}
+          </button>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <ul style={{ display: 'flex', gap: '28px', listStyle: 'none', margin: 0, padding: 0 }}>
+              {['services','portfolio','skills','certs','contact'].map((id, i) => (
+                <li key={id}>
+                  <a href={`#${id}`} style={{ textDecoration: 'none', fontSize: '12px', color: 'var(--text2)', letterSpacing: '0.1em', textTransform: 'uppercase', transition: 'color 0.2s' }}
+                    onMouseEnter={e => e.target.style.color = 'var(--accent)'}
+                    onMouseLeave={e => e.target.style.color = 'var(--text2)'}>
+                    {t.nav[i]}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <div style={{ display: 'flex', border: '0.5px solid var(--border2)', borderRadius: '20px', overflow: 'hidden' }}>
+              {['es','en'].map(l => (
+                <button key={l} onClick={() => { setLang(l); setActiveFilter(null) }}
+                  style={{
+                    padding: '5px 13px', fontSize: '11px', fontWeight: 500,
+                    cursor: 'pointer', border: 'none', letterSpacing: '0.08em',
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    background: lang === l ? 'var(--accent)' : 'transparent',
+                    color: lang === l ? '#0A0A0B' : 'var(--text2)',
+                    transition: 'all 0.2s'
+                  }}>
+                  {l.toUpperCase()}
+                </button>
+              ))}
+            </div>
+            <a href="https://www.upwork.com/freelancers/~01eea82ac6fd6d5cf6?mp_source=share" target="_blank" rel="noopener noreferrer"
+              style={{
+                padding: '8px 18px', background: 'var(--accent)', color: '#0A0A0B',
+                border: 'none', borderRadius: '2px', fontSize: '12px', fontWeight: 600,
+                letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer',
+                textDecoration: 'none', fontFamily: "'Space Grotesk', sans-serif"
+              }}>
+              Upwork ↗
+            </a>
           </div>
-          <a href="https://www.upwork.com/freelancers/~01eea82ac6fd6d5cf6?mp_source=share" target="_blank" rel="noopener noreferrer"
-            style={{
-              padding: '8px 18px', background: 'var(--accent)', color: '#0A0A0B',
-              border: 'none', borderRadius: '2px', fontSize: '12px', fontWeight: 600,
-              letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer',
-              textDecoration: 'none', fontFamily: "'Space Grotesk', sans-serif"
-            }}>
-            Upwork ↗
-          </a>
-        </div>
+        )}
       </nav>
+
+      {/* MOBILE MENU */}
+      {isMobile && menuOpen && (
+        <div style={{
+          position: 'fixed', top: '60px', left: 0, right: 0, zIndex: 99,
+          background: 'rgba(10,10,11,0.98)', backdropFilter: 'blur(16px)',
+          borderBottom: '0.5px solid var(--border)', padding: '20px'
+        }}>
+          <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {['services','portfolio','skills','certs','contact'].map((id, i) => (
+              <li key={id}>
+                <a href={`#${id}`} onClick={() => setMenuOpen(false)}
+                  style={{ textDecoration: 'none', fontSize: '14px', color: 'var(--text)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                  {t.nav[i]}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <div style={{ display: 'flex', gap: '12px', marginTop: '20px', alignItems: 'center' }}>
+            <div style={{ display: 'flex', border: '0.5px solid var(--border2)', borderRadius: '20px', overflow: 'hidden' }}>
+              {['es','en'].map(l => (
+                <button key={l} onClick={() => { setLang(l); setActiveFilter(null) }}
+                  style={{
+                    padding: '5px 13px', fontSize: '11px', fontWeight: 500,
+                    cursor: 'pointer', border: 'none', letterSpacing: '0.08em',
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    background: lang === l ? 'var(--accent)' : 'transparent',
+                    color: lang === l ? '#0A0A0B' : 'var(--text2)',
+                    transition: 'all 0.2s'
+                  }}>
+                  {l.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* HERO */}
       <section style={{
-        minHeight: '92vh', display: 'grid', gridTemplateColumns: '1fr 1fr',
-        alignItems: 'center', padding: '80px 48px 60px', gap: '40px',
+        minHeight: isMobile ? 'auto' : '92vh',
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+        alignItems: 'center',
+        padding: isMobile ? '40px 20px' : '80px 48px 60px',
+        gap: '40px',
         position: 'relative', overflow: 'hidden'
       }}>
         <svg style={{ position: 'absolute', inset: 0, opacity: 0.04, pointerEvents: 'none' }} viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
@@ -75,7 +135,7 @@ export default function Home() {
           <rect width="100%" height="100%" fill="url(#grid)"/>
         </svg>
 
-        <div style={{ position: 'relative', zIndex: 1 }}>
+        <div style={{ position: 'relative', zIndex: 1, order: isMobile ? 2 : 1 }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '11px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '24px' }}>
             <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', animation: 'pulse 2s infinite' }}/>
             <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}`}</style>
@@ -83,8 +143,8 @@ export default function Home() {
           </div>
 
           <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, lineHeight: 0.95, color: 'var(--text)', marginBottom: '20px', letterSpacing: '-0.01em' }}>
-            <span style={{ display: 'block', fontSize: '80px' }}>Héctor</span>
-            <span style={{ display: 'block', fontSize: '80px', fontStyle: 'italic', color: 'var(--accent)' }}>Cuevas</span>
+            <span style={{ display: 'block', fontSize: isMobile ? '56px' : '80px' }}>Héctor</span>
+            <span style={{ display: 'block', fontSize: isMobile ? '56px' : '80px', fontStyle: 'italic', color: 'var(--accent)' }}>Cuevas</span>
           </h1>
 
           <p style={{ fontSize: '13px', color: 'var(--text2)', marginBottom: '28px', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
@@ -93,7 +153,7 @@ export default function Home() {
           <p style={{ fontSize: '15px', color: 'var(--text2)', lineHeight: 1.75, marginBottom: '36px', maxWidth: '460px' }}>
             {t.heroDesc}
           </p>
-          <div style={{ display: 'flex', gap: '12px' }}>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
             <a href="#portfolio" style={{ background: 'var(--accent)', color: '#0A0A0B', padding: '13px 28px', border: 'none', borderRadius: '2px', fontSize: '12px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', textDecoration: 'none', fontFamily: "Space Grotesk, sans-serif" }}>
               {t.ctaPrimary}
             </a>
@@ -104,40 +164,37 @@ export default function Home() {
         </div>
 
         {/* HERO IMAGE + STATS */}
-        <div style={{ position: 'relative', zIndex: 1, height: '500px' }}
+        <div style={{ position: 'relative', zIndex: 1, height: isMobile ? '360px' : '500px', order: isMobile ? 1 : 2 }}
           onMouseMove={e => {
+            if (isMobile) return
             const rect = e.currentTarget.getBoundingClientRect()
             const x = (e.clientX - rect.left - rect.width / 2) / 20
             const y = (e.clientY - rect.top - rect.height / 2) / 20
             e.currentTarget.querySelector('img').style.transform = `translate(${x}px, ${y}px) scale(1.03)`
           }}
           onMouseLeave={e => {
+            if (isMobile) return
             e.currentTarget.querySelector('img').style.transform = 'translate(0,0) scale(1)'
           }}>
 
-          {/* Gradiente de fondo */}
           <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at center, rgba(0,255,65,0.10) 0%, rgba(10,10,11,0.98) 70%)', borderRadius: '2px' }}/>
-
-          {/* Esquinas */}
           <div style={{ position: 'absolute', top: 0, left: 0, width: '20px', height: '20px', borderTop: '2px solid var(--accent)', borderLeft: '2px solid var(--accent)', zIndex: 2 }}/>
           <div style={{ position: 'absolute', top: 0, right: 0, width: '20px', height: '20px', borderTop: '2px solid var(--accent)', borderRight: '2px solid var(--accent)', zIndex: 2 }}/>
           <div style={{ position: 'absolute', bottom: 0, left: 0, width: '20px', height: '20px', borderBottom: '2px solid var(--accent)', borderLeft: '2px solid var(--accent)', zIndex: 2 }}/>
           <div style={{ position: 'absolute', bottom: 0, right: 0, width: '20px', height: '20px', borderBottom: '2px solid var(--accent)', borderRight: '2px solid var(--accent)', zIndex: 2 }}/>
 
-          {/* Foto */}
           <img
             src="/foto-hero.png"
             alt="Héctor Cuevas"
             style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block', transition: 'transform 0.15s ease-out' }}
           />
 
-          {/* Stats overlay */}
           <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 3, background: 'linear-gradient(to top, rgba(10,10,11,0.95) 0%, rgba(10,10,11,0.6) 60%, transparent 100%)', padding: '24px 16px 16px' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1px', background: 'rgba(255,255,255,0.05)' }}>
               {stats[lang].map((s, i) => (
-                <div key={i} style={{ padding: '14px', textAlign: 'center' }}>
-                  <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '26px', fontWeight: 300, color: 'var(--accent)', lineHeight: 1 }}>{s.num}</div>
-                  <div style={{ fontSize: '9px', color: 'var(--text3)', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: '3px' }}>{s.label}</div>
+                <div key={i} style={{ padding: isMobile ? '10px 6px' : '14px', textAlign: 'center' }}>
+                  <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? '20px' : '26px', fontWeight: 300, color: 'var(--accent)', lineHeight: 1 }}>{s.num}</div>
+                  <div style={{ fontSize: isMobile ? '8px' : '9px', color: 'var(--text3)', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: '3px' }}>{s.label}</div>
                 </div>
               ))}
             </div>
@@ -145,22 +202,22 @@ export default function Home() {
         </div>
       </section>
 
-      <hr style={{ border: 'none', borderTop: '0.5px solid var(--border)', margin: '0 48px' }}/>
+      <hr style={{ border: 'none', borderTop: '0.5px solid var(--border)', margin: `0 ${px}` }}/>
 
       {/* SERVICES */}
-      <section id="services" style={{ padding: '72px 48px' }}>
+      <section id="services" style={{ padding: `72px ${px}` }}>
         <SectionHeader num="01" title={t.servicesTitle}/>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1px', background: 'var(--border)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap: '1px', background: 'var(--border)' }}>
           {services[lang].map((s, i) => (
             <ServiceCard key={i} {...s}/>
           ))}
         </div>
       </section>
 
-      <hr style={{ border: 'none', borderTop: '0.5px solid var(--border)', margin: '0 48px' }}/>
+      <hr style={{ border: 'none', borderTop: '0.5px solid var(--border)', margin: `0 ${px}` }}/>
 
       {/* PORTFOLIO */}
-      <section id="portfolio" style={{ padding: '72px 48px' }}>
+      <section id="portfolio" style={{ padding: `72px ${px}` }}>
         <SectionHeader num="02" title={t.portfolioTitle}/>
         <div style={{ display: 'flex', gap: '6px', marginBottom: '36px', flexWrap: 'wrap' }}>
           {t.filters.map((f, i) => (
@@ -177,19 +234,19 @@ export default function Home() {
             </button>
           ))}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap: '16px' }}>
           {filteredProjects.map((p, i) => (
             <ProjectCard key={i} {...p} inProgressLabel={t.inProgress}/>
           ))}
         </div>
       </section>
 
-      <hr style={{ border: 'none', borderTop: '0.5px solid var(--border)', margin: '0 48px' }}/>
+      <hr style={{ border: 'none', borderTop: '0.5px solid var(--border)', margin: `0 ${px}` }}/>
 
       {/* SKILLS */}
-      <section id="skills" style={{ padding: '72px 48px' }}>
+      <section id="skills" style={{ padding: `72px ${px}` }}>
         <SectionHeader num="03" title={t.skillsTitle}/>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '40px' : '60px' }}>
           <div>
             <div style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '24px' }}>
               {t.skillsLabel}
@@ -220,12 +277,12 @@ export default function Home() {
         </div>
       </section>
 
-      <hr style={{ border: 'none', borderTop: '0.5px solid var(--border)', margin: '0 48px' }}/>
+      <hr style={{ border: 'none', borderTop: '0.5px solid var(--border)', margin: `0 ${px}` }}/>
 
       {/* CERTIFICATES */}
-      <section id="certs" style={{ padding: '72px 48px' }}>
+      <section id="certs" style={{ padding: `72px ${px}` }}>
         <SectionHeader num="04" title={t.certsTitle}/>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap: '12px' }}>
           {certificates.map((c, i) => (
             <div key={i} style={{ background: 'var(--bg2)', border: '0.5px solid var(--border)', padding: '20px', transition: 'border-color 0.2s', cursor: 'default' }}
               onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent)'}
@@ -240,14 +297,14 @@ export default function Home() {
         </div>
       </section>
 
-      <hr style={{ border: 'none', borderTop: '0.5px solid var(--border)', margin: '0 48px' }}/>
+      <hr style={{ border: 'none', borderTop: '0.5px solid var(--border)', margin: `0 ${px}` }}/>
 
       {/* CONTACT */}
-      <section id="contact" style={{ padding: '72px 48px' }}>
+      <section id="contact" style={{ padding: `72px ${px}` }}>
         <SectionHeader num="05" title={t.contactTitle}/>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '72px', alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '40px' : '72px', alignItems: 'start' }}>
           <div>
-            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '34px', fontWeight: 300, color: 'var(--text)', lineHeight: 1.25, marginBottom: '24px' }}>
+            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? '26px' : '34px', fontWeight: 300, color: 'var(--text)', lineHeight: 1.25, marginBottom: '24px' }}>
               "{t.contactQuote}"
             </p>
             <p style={{ fontSize: '14px', color: 'var(--accent)', marginBottom: '6px' }}>hccuevas90@gmail.com</p>
@@ -268,15 +325,14 @@ export default function Home() {
       </section>
 
       {/* FOOTER */}
-      <footer style={{ padding: '28px 48px', borderTop: '0.5px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <footer style={{ padding: `28px ${px}`, borderTop: '0.5px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
         <div style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '18px', color: 'var(--text)', fontWeight: 300 }}>
           Héctor Cuevas
         </div>
-        <div style={{ fontSize: '12px', color: 'var(--text3)' }}>© 2025 {t.footerRights}</div>
+        <div style={{ fontSize: '12px', color: 'var(--text3)' }}>© 2026 {t.footerRights}</div>
         <div style={{ display: 'flex', gap: '20px' }}>
-          {['Upwork','LinkedIn','GitHub'].map(link => (
-            <a key={link} href="#" style={{ color: 'var(--text3)', textDecoration: 'none', fontSize: '12px', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{link}</a>
-          ))}
+          <a href="https://www.upwork.com/freelancers/~01eea82ac6fd6d5cf6?mp_source=share" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text3)', textDecoration: 'none', fontSize: '12px', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Upwork</a>
+          <a href="https://www.linkedin.com/in/h%C3%A9ctor-cuevas/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text3)', textDecoration: 'none', fontSize: '12px', letterSpacing: '0.06em', textTransform: 'uppercase' }}>LinkedIn</a>
         </div>
       </footer>
     </div>
@@ -368,13 +424,13 @@ function ContactForm({ t, lang }) {
       ].map(({ key, placeholder, type }) => (
         <input key={key} type={type || 'text'} placeholder={placeholder}
           value={form[key]} onChange={e => setForm({ ...form, [key]: e.target.value })}
-          style={{ width: '100%', padding: '12px 16px', background: 'var(--bg2)', border: '0.5px solid var(--border2)', borderRadius: '2px', fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', color: 'var(--text)', outline: 'none' }}
+          style={{ width: '100%', padding: '12px 16px', background: 'var(--bg2)', border: '0.5px solid var(--border2)', borderRadius: '2px', fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', color: 'var(--text)', outline: 'none', boxSizing: 'border-box' }}
           onFocus={e => e.target.style.borderColor = 'var(--accent)'}
           onBlur={e => e.target.style.borderColor = 'var(--border2)'}
         />
       ))}
       <textarea placeholder={t.formMessage} value={form.message} onChange={e => setForm({ ...form, message: e.target.value })}
-        style={{ width: '100%', padding: '12px 16px', background: 'var(--bg2)', border: '0.5px solid var(--border2)', borderRadius: '2px', fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', color: 'var(--text)', outline: 'none', height: '110px', resize: 'none' }}
+        style={{ width: '100%', padding: '12px 16px', background: 'var(--bg2)', border: '0.5px solid var(--border2)', borderRadius: '2px', fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', color: 'var(--text)', outline: 'none', height: '110px', resize: 'none', boxSizing: 'border-box' }}
         onFocus={e => e.target.style.borderColor = 'var(--accent)'}
         onBlur={e => e.target.style.borderColor = 'var(--border2)'}
       />
