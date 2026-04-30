@@ -1,6 +1,90 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { services, projects, certificates, skills, tools, stats, ui } from '../data/content'
+
+const SERVICE_ICONS = {
+  "001": (hovered) => (
+    <svg width="52" height="52" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"
+      style={{ transition: 'transform 0.4s ease', transform: hovered ? 'scale(1.15) rotate(-8deg)' : 'scale(1)' }}>
+      <circle cx="14" cy="14" r="8" stroke="var(--accent)" strokeWidth="1.5" fill="none"
+        style={{ strokeDasharray: hovered ? '0' : '52', strokeDashoffset: hovered ? '0' : '52', transition: 'stroke-dasharray 0.5s ease, stroke-dashoffset 0.5s ease' }}/>
+      <circle cx="14" cy="14" r="8" stroke="var(--accent)" strokeWidth="1.5" fill="none" opacity="0.3"/>
+      <line x1="20" y1="20" x2="28" y2="28" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="11" y1="14" x2="17" y2="14" stroke="var(--accent)" strokeWidth="1" strokeLinecap="round" opacity={hovered ? 1 : 0.5}/>
+      <line x1="14" y1="11" x2="14" y2="17" stroke="var(--accent)" strokeWidth="1" strokeLinecap="round" opacity={hovered ? 1 : 0.5}/>
+    </svg>
+  ),
+  "002": (hovered) => (
+    <svg width="52" height="52" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"
+      style={{ transition: 'transform 0.6s ease', transform: hovered ? 'rotate(60deg)' : 'rotate(0deg)' }}>
+      <path d="M16 4 L18 10 L24 8 L20 14 L26 16 L20 18 L24 24 L18 22 L16 28 L14 22 L8 24 L12 18 L6 16 L12 14 L8 8 L14 10 Z"
+        stroke="var(--accent)" strokeWidth="1.5" fill="none" strokeLinejoin="round"/>
+      <circle cx="16" cy="16" r="3" fill="var(--accent)" opacity={hovered ? 1 : 0.4}/>
+    </svg>
+  ),
+  "003": (hovered) => (
+    <svg width="52" height="52" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="6" y="4" width="20" height="24" rx="2" stroke="var(--accent)" strokeWidth="1.5" fill="none"/>
+      <line x1="11" y1="11" x2="21" y2="11" stroke="var(--accent)" strokeWidth="1" strokeLinecap="round"
+        style={{ opacity: hovered ? 1 : 0.4, transition: 'opacity 0.3s' }}/>
+      <line x1="11" y1="16" x2="21" y2="16" stroke="var(--accent)" strokeWidth="1" strokeLinecap="round"
+        style={{ opacity: hovered ? 1 : 0.4, transition: 'opacity 0.3s 0.1s' }}/>
+      <line x1="11" y1="21" x2="17" y2="21" stroke="var(--accent)" strokeWidth="1" strokeLinecap="round"
+        style={{ opacity: hovered ? 1 : 0.4, transition: 'opacity 0.3s 0.2s' }}/>
+      <path d="M8 11 L9.5 12.5 L12 9" stroke="var(--accent)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"
+        style={{ opacity: hovered ? 1 : 0, transition: 'opacity 0.3s' }}/>
+    </svg>
+  ),
+  "004": (hovered) => (
+    <svg width="52" height="52" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="4" width="24" height="24" rx="2" stroke="var(--accent)" strokeWidth="1.5" fill="none"/>
+      <line x1="4" y1="12" x2="28" y2="12" stroke="var(--accent)" strokeWidth="1" opacity="0.5"/>
+      <line x1="4" y1="20" x2="28" y2="20" stroke="var(--accent)" strokeWidth="1" opacity="0.5"/>
+      <line x1="12" y1="4" x2="12" y2="28" stroke="var(--accent)" strokeWidth="1" opacity="0.5"/>
+      <line x1="20" y1="4" x2="20" y2="28" stroke="var(--accent)" strokeWidth="1" opacity="0.5"/>
+      <rect x="12" y="12" width="8" height="8" fill="var(--accent)" opacity={hovered ? 0.6 : 0.2}
+        style={{ transition: 'opacity 0.3s' }}/>
+    </svg>
+  ),
+  "005": (hovered) => (
+    <svg width="52" height="52" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="8" y="10" width="16" height="14" rx="3" stroke="var(--accent)" strokeWidth="1.5" fill="none"/>
+      <circle cx="12" cy="17" r="1.5" fill="var(--accent)" opacity={hovered ? 1 : 0.5}
+        style={{ transition: 'opacity 0.2s' }}/>
+      <circle cx="20" cy="17" r="1.5" fill="var(--accent)" opacity={hovered ? 1 : 0.5}
+        style={{ transition: 'opacity 0.2s 0.1s' }}/>
+      <path d="M13 21 Q16 23 19 21" stroke="var(--accent)" strokeWidth="1.2" fill="none" strokeLinecap="round"
+        style={{ opacity: hovered ? 1 : 0.3, transition: 'opacity 0.3s' }}/>
+      <line x1="12" y1="10" x2="10" y2="6" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="20" y1="10" x2="22" y2="6" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="16" y1="24" x2="16" y2="28" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="12" y1="28" x2="20" y2="28" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  ),
+  "006": (hovered) => (
+    <svg width="52" height="52" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"
+      style={{ transition: 'transform 0.4s ease', transform: hovered ? 'rotate(15deg) scale(1.1)' : 'rotate(0deg) scale(1)' }}>
+      <path d="M8 24 L12 20 L20 8 L24 12 L12 20 Z" stroke="var(--accent)" strokeWidth="1.5" fill="none" strokeLinejoin="round"/>
+      <path d="M20 8 L24 4 L28 8 L24 12" stroke="var(--accent)" strokeWidth="1.5" fill="none" strokeLinejoin="round"/>
+      <circle cx="10" cy="22" r="2" stroke="var(--accent)" strokeWidth="1.2" fill="none"
+        style={{ opacity: hovered ? 1 : 0.4, transition: 'opacity 0.3s' }}/>
+    </svg>
+  ),
+}
+
+function useScrollReveal() {
+  const ref = useRef(null)
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true) },
+      { threshold: 0.15 }
+    )
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [])
+  return [ref, visible]
+}
 
 export default function Home() {
   const [lang, setLang] = useState('es')
@@ -138,7 +222,7 @@ export default function Home() {
         <div style={{ position: 'relative', zIndex: 1, order: isMobile ? 2 : 1 }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '11px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '24px' }}>
             <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', animation: 'pulse 2s infinite' }}/>
-            <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}`}</style>
+            <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}} @keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}`}</style>
             {t.available}
           </div>
 
@@ -207,11 +291,7 @@ export default function Home() {
       {/* SERVICES */}
       <section id="services" style={{ padding: `72px ${px}` }}>
         <SectionHeader num="01" title={t.servicesTitle}/>
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap: '1px', background: 'var(--border)' }}>
-          {services[lang].map((s, i) => (
-            <ServiceCard key={i} {...s}/>
-          ))}
-        </div>
+        <ServicesGrid services={services[lang]} isMobile={isMobile}/>
       </section>
 
       <hr style={{ border: 'none', borderTop: '0.5px solid var(--border)', margin: `0 ${px}` }}/>
@@ -339,6 +419,17 @@ export default function Home() {
   )
 }
 
+function ServicesGrid({ services, isMobile }) {
+  const [ref, visible] = useScrollReveal()
+  return (
+    <div ref={ref} style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap: '1px', background: 'var(--border)' }}>
+      {services.map((s, i) => (
+        <ServiceCard key={i} {...s} index={i} visible={visible}/>
+      ))}
+    </div>
+  )
+}
+
 function SectionHeader({ num, title }) {
   return (
     <div style={{ display: 'flex', alignItems: 'baseline', gap: '16px', marginBottom: '44px' }}>
@@ -349,13 +440,24 @@ function SectionHeader({ num, title }) {
   )
 }
 
-function ServiceCard({ num, name, desc }) {
+function ServiceCard({ num, name, desc, index, visible }) {
   const [hovered, setHovered] = useState(false)
+  const delay = `${index * 80}ms`
   return (
     <div onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
-      style={{ background: hovered ? 'var(--bg3)' : 'var(--bg2)', padding: '32px 28px', cursor: 'pointer', transition: 'background 0.2s', position: 'relative', overflow: 'hidden' }}>
+      style={{
+        background: hovered ? 'var(--bg3)' : 'var(--bg2)',
+        padding: '32px 28px', cursor: 'pointer', transition: 'background 0.2s, transform 0.4s, opacity 0.4s',
+        position: 'relative', overflow: 'hidden',
+        transform: visible ? 'translateY(0)' : 'translateY(28px)',
+        opacity: visible ? 1 : 0,
+        transitionDelay: delay
+      }}>
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '1px', background: 'var(--accent)', transform: hovered ? 'scaleX(1)' : 'scaleX(0)', transformOrigin: 'left', transition: 'transform 0.3s' }}/>
-      <div style={{ fontSize: '10px', color: 'var(--text3)', letterSpacing: '0.12em', marginBottom: '20px' }}>{num}</div>
+      <div style={{ marginBottom: '16px' }}>
+        {SERVICE_ICONS[num] ? SERVICE_ICONS[num](hovered) : null}
+      </div>
+      <div style={{ fontSize: '10px', color: 'var(--text3)', letterSpacing: '0.12em', marginBottom: '12px' }}>{num}</div>
       <div style={{ fontSize: '16px', fontWeight: 500, color: 'var(--text)', marginBottom: '10px' }}>{name}</div>
       <div style={{ fontSize: '13px', color: 'var(--text2)', lineHeight: 1.65 }}>{desc}</div>
     </div>
