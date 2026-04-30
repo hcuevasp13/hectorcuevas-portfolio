@@ -18,7 +18,10 @@ export const metadata = {
     description: 'Automatización, Research y Soporte Admin.',
   },
 }
-
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+}
 export default function RootLayout({ children }) {
   return (
     <html lang="es">
