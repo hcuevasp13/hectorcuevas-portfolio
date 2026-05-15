@@ -47,14 +47,24 @@ export const projects = {
       image: "/projects/BRIGIT.png"
     },
     {
-      id: 4,
-      cat: "Data Entry",
-      title: "Data Entry",
-      desc: "Automatización de hojas de cálculo y organización de datos para negocios.",
-      client: "Trabajo freelance, Upwork",
-      tags: ["Google Sheets", "Excel", "Data Processing", "Automation"],
-      image: "/projects/Data Entry.png"
-    },
+  id: 4,
+  cat: "Data Entry",
+  title: "Land Tracker",
+  desc: "Sistema CRM en Google Sheets para land investors. Registra leads, hace seguimiento de llamadas y evalúa viabilidad técnica de parcelas con due diligence automatizada.",
+  client: "Demo freelance",
+  tags: ["Google Sheets", "Automatización", "CRM", "Land Investing"],
+  images: ["/projects/landtracker-calls.png", "/projects/landtracker-dd.png"]
+},
+{
+  id: 5,
+  cat: "Research",
+  title: "NGO Outreach Research, África",
+  desc: "Banco de 30 contactos de ONGs en Kenia, Nigeria y Sudáfrica. Datos verificados directamente en sitios oficiales: nombre, contacto, email, teléfono y web. Listo para campañas de cold outreach.",
+  client: "Contribution Solutions, Upwork",
+  tags: ["Excel", "Web Research", "Outreach", "NGO"],
+  image: "/projects/research-sven.png"
+},
+  
   ],
   en: [
     {
@@ -85,14 +95,23 @@ export const projects = {
       image: "/projects/BRIGIT.png"
     },
     {
-      id: 4,
-      cat: "Data Entry",
-      title: "Data Entry",
-      desc: "Spreadsheet automation and data organization for businesses.",
-      client: "Freelance work, Upwork",
-      tags: ["Google Sheets", "Excel", "Data Processing", "Automation"],
-      image: "/projects/Data Entry.png"
-    },
+  id: 4,
+  cat: "Data Entry",
+  title: "Land Tracker",
+  desc: "Google Sheets CRM system for land investors. Tracks leads, manages call follow-ups, and evaluates parcel viability through automated due diligence.",
+  client: "Freelance demo",
+  tags: ["Google Sheets", "Automation", "CRM", "Land Investing"],
+  images: ["/projects/landtracker-calls.png", "/projects/landtracker-dd.png"]
+},
+  {
+  id: 6,
+  cat: "Research",
+  title: "NGO Outreach Research, Africa",
+  desc: "Database of 30 NGO contacts across Kenya, Nigeria, and South Africa. Data verified directly on official websites: name, contact person, email, phone, and website. Ready for cold outreach campaigns.",
+  client: "Contribution Solutions, Upwork",
+  tags: ["Excel", "Web Research", "Outreach", "NGO"],
+  image: "/projects/research-sven.png"
+},
   ]
 }
 
@@ -106,6 +125,7 @@ export const certificates = [
   { platform: "Domestika", name: { es: "Usar ChatGPT para trabajar", en: "Using ChatGPT for Work" }, year: "2025" },
   { platform: "Domestika", name: { es: "Canva de 0 a 100", en: "Canva from 0 to 100" }, year: "2025" },
   { platform: "Universidad", name: { es: "Ingeniería en Sistemas", en: "Systems Engineering" }, year: "" },
+  { platform: "Platzi", name: { es: "Excel Avanzado", en: "Advanced Excel" }, year: "2026" },
 ]
 
 export const skills = {
@@ -152,7 +172,7 @@ export const stats = {
 
 export const ui = {
   es: {
-    nav: ["Servicios", "Portafolio", "Habilidades", "Certificados", "Contacto"],
+    nav: ["Sobre mí", "Servicios", "Portafolio", "Habilidades", "Certificados", "Contacto"],
     available: "Disponible para proyectos",
     role: "Freelancer, Automatización, Research, Soporte Admin",
     heroDesc: "Ayudo a empresas y emprendedores a trabajar más inteligente. Organizo datos, automatizo flujos de trabajo e investigo lo que necesitan para tomar mejores decisiones.",
@@ -162,6 +182,8 @@ export const ui = {
     portfolioTitle: "Proyectos y Trabajo",
     skillsTitle: "Habilidades y Herramientas",
     certsTitle: "Certificados y Formación",
+    aboutTitle: "Sobre mí",
+    aboutText: "Soy técnico de sistemas de día y freelancer de noche, desde Panamá. Llevo años trabajando en entornos tecnológicos y siempre supe que había algo más allá del trabajo de oficina, algo que me permitiera trabajar desde cualquier lugar y a cualquier hora.\n\nCuando descubrí el mundo freelance, me empeñé en aprender. No fue fácil, y todavía estoy en camino, pero hoy puedo decirle a mi yo de hace 5 años que ya gané mis primeros $300 trabajando online. Eso es solo el comienzo.\n\nMe apasiona ayudar. Trabajo bien con Excel, automatización con IA y web research. Me adapto al cliente, busco entender qué necesita y entrego algo que le genere valor real.",
     contactTitle: "Hablemos",
     contactQuote: "Cuéntame en qué estás trabajando, vemos cómo puedo ayudarte.",
     contactLocation: "Panamá, disponible para trabajo remoto global",
@@ -179,7 +201,7 @@ export const ui = {
     inProgress: "En progreso",
   },
   en: {
-    nav: ["Services", "Portfolio", "Skills", "Certificates", "Contact"],
+    nav: ["About", "Services", "Portfolio", "Skills", "Certificates", "Contact"],
     available: "Available for projects",
     role: "Freelancer, Automation, Research, Admin Support",
     heroDesc: "I help businesses and entrepreneurs work smarter. I organize data, automate workflows, and research what they need to make better decisions.",
@@ -189,6 +211,8 @@ export const ui = {
     portfolioTitle: "Projects & Work",
     skillsTitle: "Skills & Tools",
     certsTitle: "Certificates & Education",
+    aboutTitle: "About me",
+    aboutText: "I'm a systems technician by day and a freelancer by night, based in Panama. I've spent years working in tech environments and always knew there was something beyond the office, something that would let me work from anywhere, at any time.\n\nWhen I discovered freelancing, I committed to learning it. It wasn't easy, and I'm still growing, but today I can tell my past self that I've already earned my first $300 working online. And that's just the beginning.\n\nI genuinely enjoy helping people. I work well with Excel, AI automation, and web research. I adapt to each client, focus on understanding what they actually need, and deliver work that creates real value.",
     contactTitle: "Let's talk",
     contactQuote: "Tell me what you're working on, let's see how I can help.",
     contactLocation: "Panama, available for remote work worldwide",

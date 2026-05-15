@@ -86,11 +86,93 @@ function useScrollReveal() {
   return [ref, visible]
 }
 
+function ProjectModal({ project, onClose }) {
+  const [slideIndex, setSlideIndex] = useState(0)
+  const allImages = project.images || (project.image ? [project.image] : [])
+
+  useEffect(() => {
+    const handleKey = (e) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', handleKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', handleKey)
+      document.body.style.overflow = ''
+    }
+  }, [onClose])
+
+  return (
+    <div onClick={onClose} style={{
+      position: 'fixed', inset: 0, zIndex: 200,
+      background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: '20px'
+    }}>
+      <div onClick={e => e.stopPropagation()} style={{
+        background: 'var(--bg2)', border: '0.5px solid var(--accent)',
+        borderRadius: '2px', width: '100%', maxWidth: '860px',
+        maxHeight: '90vh', overflow: 'auto'
+      }}>
+        <div style={{ position: 'relative' }}>
+          <div style={{ height: '420px', position: 'relative', overflow: 'hidden', background: 'var(--bg3)' }}>
+            {allImages.length > 0
+              ? <img src={allImages[slideIndex]} alt={project.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }}/>
+              : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'serif', fontSize: '80px', color: 'var(--border2)', fontStyle: 'italic' }}>{project.title.charAt(0)}</div>
+            }
+            {allImages.length > 1 && (
+              <div style={{ position: 'absolute', bottom: '16px', left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: '8px', zIndex: 2 }}>
+                {allImages.map((_, i) => (
+                  <div key={i} onClick={() => setSlideIndex(i)} style={{
+                    width: '8px', height: '8px', borderRadius: '50%', cursor: 'pointer',
+                    background: i === slideIndex ? 'var(--accent)' : 'rgba(255,255,255,0.3)',
+                    transition: 'background 0.3s'
+                  }}/>
+                ))}
+              </div>
+            )}
+            {allImages.length > 1 && slideIndex > 0 && (
+              <button onClick={() => setSlideIndex(i => i - 1)} style={{
+                position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)',
+                background: 'rgba(0,0,0,0.6)', border: '0.5px solid var(--border2)', color: 'var(--text)',
+                width: '36px', height: '36px', borderRadius: '2px', cursor: 'pointer', fontSize: '16px'
+              }}>{'<'}</button>
+            )}
+            {allImages.length > 1 && slideIndex < allImages.length - 1 && (
+              <button onClick={() => setSlideIndex(i => i + 1)} style={{
+                position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)',
+                background: 'rgba(0,0,0,0.6)', border: '0.5px solid var(--border2)', color: 'var(--text)',
+                width: '36px', height: '36px', borderRadius: '2px', cursor: 'pointer', fontSize: '16px'
+              }}>{'>'}</button>
+            )}
+          </div>
+          <button onClick={onClose} style={{
+            position: 'absolute', top: '12px', right: '12px',
+            background: 'rgba(0,0,0,0.7)', border: '0.5px solid var(--border2)',
+            color: 'var(--text)', width: '32px', height: '32px',
+            borderRadius: '2px', cursor: 'pointer', fontSize: '14px', zIndex: 3
+          }}>✕</button>
+        </div>
+        <div style={{ padding: '28px' }}>
+          <div style={{ fontSize: '10px', color: 'var(--accent)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '8px' }}>{project.cat}</div>
+          <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '28px', fontWeight: 300, color: 'var(--text)', marginBottom: '12px' }}>{project.title}</div>
+          <div style={{ fontSize: '14px', color: 'var(--text2)', lineHeight: 1.75, marginBottom: '16px' }}>{project.desc}</div>
+          <div style={{ fontSize: '12px', color: 'var(--text3)', marginBottom: '16px' }}>{project.client}</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {project.tags.map((tag, i) => (
+              <span key={i} style={{ padding: '4px 10px', background: 'var(--bg)', border: '0.5px solid var(--border2)', fontSize: '11px', color: 'var(--text3)', borderRadius: '2px' }}>{tag}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function Home() {
   const [lang, setLang] = useState('es')
   const [activeFilter, setActiveFilter] = useState(null)
   const [isMobile, setIsMobile] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [selectedProject, setSelectedProject] = useState(null)
   const t = ui[lang]
 
   useEffect(() => {
@@ -108,6 +190,10 @@ export default function Home() {
 
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
+
+      {selectedProject && (
+        <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)}/>
+      )}
 
       {/* NAV */}
       <nav style={{
@@ -129,7 +215,7 @@ export default function Home() {
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <ul style={{ display: 'flex', gap: '28px', listStyle: 'none', margin: 0, padding: 0 }}>
-              {['services','portfolio','skills','certs','contact'].map((id, i) => (
+              {['about','services','portfolio','skills','certs','contact'].map((id, i) => (
                 <li key={id}>
                   <a href={`#${id}`} style={{ textDecoration: 'none', fontSize: '12px', color: 'var(--text2)', letterSpacing: '0.1em', textTransform: 'uppercase', transition: 'color 0.2s' }}
                     onMouseEnter={e => e.target.style.color = 'var(--accent)'}
@@ -175,7 +261,7 @@ export default function Home() {
           borderBottom: '0.5px solid var(--border)', padding: '20px'
         }}>
           <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {['services','portfolio','skills','certs','contact'].map((id, i) => (
+            {['about','services','portfolio','skills','certs','contact'].map((id, i) => (
               <li key={id}>
                 <a href={`#${id}`} onClick={() => setMenuOpen(false)}
                   style={{ textDecoration: 'none', fontSize: '14px', color: 'var(--text)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
@@ -288,9 +374,33 @@ export default function Home() {
 
       <hr style={{ border: 'none', borderTop: '0.5px solid var(--border)', margin: `0 ${px}` }}/>
 
+      {/* ABOUT */}
+      <section id="about" style={{ padding: `72px ${px}` }}>
+        <SectionHeader num="01" title={t.aboutTitle}/>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '40px' : '80px', alignItems: 'center' }}>
+          <div>
+            {t.aboutText.split('\n\n').map((paragraph, i) => (
+              <p key={i} style={{ fontSize: '15px', color: 'var(--text2)', lineHeight: 1.85, marginBottom: '20px' }}>
+                {paragraph}
+              </p>
+            ))}
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px', background: 'var(--border)' }}>
+            {stats[lang].map((s, i) => (
+              <div key={i} style={{ background: 'var(--bg2)', padding: '28px', textAlign: 'center' }}>
+                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '40px', fontWeight: 300, color: 'var(--accent)', lineHeight: 1 }}>{s.num}</div>
+                <div style={{ fontSize: '10px', color: 'var(--text3)', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '6px' }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <hr style={{ border: 'none', borderTop: '0.5px solid var(--border)', margin: `0 ${px}` }}/>
+
       {/* SERVICES */}
       <section id="services" style={{ padding: `72px ${px}` }}>
-        <SectionHeader num="01" title={t.servicesTitle}/>
+        <SectionHeader num="02" title={t.servicesTitle}/>
         <ServicesGrid services={services[lang]} isMobile={isMobile}/>
       </section>
 
@@ -298,7 +408,7 @@ export default function Home() {
 
       {/* PORTFOLIO */}
       <section id="portfolio" style={{ padding: `72px ${px}` }}>
-        <SectionHeader num="02" title={t.portfolioTitle}/>
+        <SectionHeader num="03" title={t.portfolioTitle}/>
         <div style={{ display: 'flex', gap: '6px', marginBottom: '36px', flexWrap: 'wrap' }}>
           {t.filters.map((f, i) => (
             <button key={i} onClick={() => setActiveFilter(f === t.filterAll ? null : f)}
@@ -316,7 +426,7 @@ export default function Home() {
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap: '16px' }}>
           {filteredProjects.map((p, i) => (
-            <ProjectCard key={i} {...p} inProgressLabel={t.inProgress}/>
+            <ProjectCard key={i} {...p} onClick={() => setSelectedProject(p)}/>
           ))}
         </div>
       </section>
@@ -325,7 +435,7 @@ export default function Home() {
 
       {/* SKILLS */}
       <section id="skills" style={{ padding: `72px ${px}` }}>
-        <SectionHeader num="03" title={t.skillsTitle}/>
+        <SectionHeader num="04" title={t.skillsTitle}/>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '40px' : '60px' }}>
           <div>
             <div style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '24px' }}>
@@ -361,7 +471,7 @@ export default function Home() {
 
       {/* CERTIFICATES */}
       <section id="certs" style={{ padding: `72px ${px}` }}>
-        <SectionHeader num="04" title={t.certsTitle}/>
+        <SectionHeader num="05" title={t.certsTitle}/>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap: '12px' }}>
           {certificates.map((c, i) => (
             <div key={i} style={{ background: 'var(--bg2)', border: '0.5px solid var(--border)', padding: '20px', transition: 'border-color 0.2s', cursor: 'default' }}
@@ -381,7 +491,7 @@ export default function Home() {
 
       {/* CONTACT */}
       <section id="contact" style={{ padding: `72px ${px}` }}>
-        <SectionHeader num="05" title={t.contactTitle}/>
+        <SectionHeader num="06" title={t.contactTitle}/>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '40px' : '72px', alignItems: 'start' }}>
           <div>
             <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? '26px' : '34px', fontWeight: 300, color: 'var(--text)', lineHeight: 1.25, marginBottom: '24px' }}>
@@ -464,17 +574,44 @@ function ServiceCard({ num, name, desc, index, visible }) {
   )
 }
 
-function ProjectCard({ cat, title, desc, client, tags, image }) {
+function ProjectCard({ cat, title, desc, client, tags, image, images, onClick }) {
   const [hovered, setHovered] = useState(false)
+  const [slideIndex, setSlideIndex] = useState(0)
+  const allImages = images || (image ? [image] : [])
+
+  useEffect(() => {
+    if (!hovered || allImages.length < 2) return
+    const interval = setInterval(() => {
+      setSlideIndex(i => (i + 1) % allImages.length)
+    }, 1500)
+    return () => clearInterval(interval)
+  }, [hovered, allImages.length])
+
+  useEffect(() => {
+    if (!hovered) setSlideIndex(0)
+  }, [hovered])
+
   return (
-    <div onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
+    <div onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} onClick={onClick}
       style={{ background: 'var(--bg2)', border: `0.5px solid ${hovered ? 'var(--accent)' : 'var(--border)'}`, cursor: 'pointer', transition: 'border-color 0.2s', overflow: 'hidden' }}>
-      <div style={{ height: '200px', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ height: '240px', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, width: '3px', height: '100%', background: 'var(--accent)', zIndex: 1 }}/>
-        {image
-          ? <img src={image} alt={title} style={{ width: '100%', height: '100%', objectFit: 'contain' }}/>
-          : <div style={{ width: '100%', height: '100%', background: 'var(--bg3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Cormorant Garamond', serif", fontSize: '48px', color: 'var(--border2)', fontStyle: 'italic' }}>{title.charAt(0)}</div>
+        {allImages.length > 0
+          ? <img src={allImages[slideIndex]} alt={title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top left', transition: 'opacity 0.4s ease' }}/>
+          : <div style={{ width: '100%', height: '100%', background: 'var(--bg3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'serif', fontSize: '48px', color: 'var(--border2)', fontStyle: 'italic' }}>{title.charAt(0)}</div>
         }
+        {hovered && (
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(200,255,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>
+            <span style={{ fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--accent)', background: 'rgba(0,0,0,0.7)', padding: '6px 14px', border: '0.5px solid var(--accent)' }}>Ver detalle</span>
+          </div>
+        )}
+        {allImages.length > 1 && (
+          <div style={{ position: 'absolute', bottom: '8px', right: '10px', display: 'flex', gap: '4px', zIndex: 3 }}>
+            {allImages.map((_, i) => (
+              <div key={i} style={{ width: '5px', height: '5px', borderRadius: '50%', background: i === slideIndex ? 'var(--accent)' : 'rgba(255,255,255,0.3)', transition: 'background 0.3s' }}/>
+            ))}
+          </div>
+        )}
       </div>
       <div style={{ padding: '18px' }}>
         <div style={{ fontSize: '10px', color: 'var(--accent)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '5px' }}>{cat}</div>
@@ -494,18 +631,29 @@ function ProjectCard({ cat, title, desc, client, tags, image }) {
 function ContactForm({ t, lang }) {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' })
   const [sent, setSent] = useState(false)
+  const [sending, setSending] = useState(false)
 
   const handleSubmit = async () => {
     if (!form.name || !form.email || !form.message) return
+    setSending(true)
     try {
-      await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
-      })
+      const emailjs = (await import('@emailjs/browser')).default
+      await emailjs.send(
+        'service_86n0lkk',
+        'template_9s47wcs',
+        {
+          from_name: form.name,
+          from_email: form.email,
+          subject: form.subject,
+          message: form.message,
+        },
+        'lUlU-wcwF1kMp26fW'
+      )
       setSent(true)
     } catch (e) {
-      setSent(true)
+      console.error('EmailJS error:', e)
+      alert(JSON.stringify(e))
+      setSending(false)
     }
   }
 
@@ -536,9 +684,9 @@ function ContactForm({ t, lang }) {
         onFocus={e => e.target.style.borderColor = 'var(--accent)'}
         onBlur={e => e.target.style.borderColor = 'var(--border2)'}
       />
-      <button onClick={handleSubmit}
-        style={{ alignSelf: 'flex-start', background: 'var(--accent)', color: '#0A0A0B', padding: '13px 28px', border: 'none', borderRadius: '2px', fontSize: '12px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: "'Space Grotesk', sans-serif" }}>
-        {t.formSend}
+      <button onClick={handleSubmit} disabled={sending}
+        style={{ alignSelf: 'flex-start', background: 'var(--accent)', color: '#0A0A0B', padding: '13px 28px', border: 'none', borderRadius: '2px', fontSize: '12px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', cursor: sending ? 'not-allowed' : 'pointer', opacity: sending ? 0.7 : 1, fontFamily: "'Space Grotesk', sans-serif" }}>
+        {sending ? (lang === 'es' ? 'Enviando...' : 'Sending...') : t.formSend}
       </button>
     </div>
   )

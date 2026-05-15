@@ -7,6 +7,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@tailwindcss/postcss": "^4.2.4",
     "next": "^15.5.15",
     "postcss": "^8.5.10",
